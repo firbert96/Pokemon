@@ -2,15 +2,18 @@
   "name": "pokemon",
   "version": "0.0.0",
   "scripts": {
-    "start": "vite",
+    "start": "vite --port 7777",
     "build": "vite build",
-    "preview": "vite preview --port 4173",
+    "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
-    "dev": "nodemon --exec \" npm run lint && vite\" "
+    "dev": "nodemon --exec \" npm run lint && vite --port 7777\" "
   },
   "dependencies": {
     "autoprefixer": "^10.4.8",
     "axios": "^0.27.2",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.1",
+    "dotenv-webpack": "^8.0.0",
     "postcss": "^8.4.16",
     "tailwindcss": "^3.1.8",
     "vue": "^3.2.37"
