@@ -1,11 +1,11 @@
 
 <template>
-  <header>
+  <!-- <header>
   </header>
 
-  <main>
+  <main> -->
     <Home/>
-  </main>
+  <!-- </main> -->
 </template>
 
 <script>
