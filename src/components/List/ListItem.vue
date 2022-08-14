@@ -1,79 +1,94 @@
 <template>
     <n-card :title="inputData.name.charAt(0).toUpperCase() + inputData.name.slice(1)" size="huge" hoverable>  
-        <n-icon size="40" @click="favoriteFunc(inputData.name)" class="text-red-600">
+        <n-icon size="40" @click="favoriteFunc(inputData.name)" class="text-red-600" :class="isList ? 'fav-icon-isList': 'fav-icon-isNotList'">
             <heart v-if="favorite" />
             <heart-outline v-else />
         </n-icon>
         <template #cover>
-            <n-skeleton v-if="loading" :width="200" :height="200" :sharp="false" size="medium" />
-            <n-image v-else :src="detailData?.sprites?.front_default" 
-                fallback-src="https://icon-library.com/images/pokeball-icon-transparent/pokeball-icon-transparent-8.jpg"
-                width="100%" 
-                height="100%" 
-                lazy
-            />
-        </template>
-
-        <n-skeleton v-if="loading" :width="200" :height="100" :sharp="false" size="medium" />
-        <n-grid v-else x-gap="10" :cols="3" class="my-2">
-            <n-gi v-for="item in detailData.types" :key="item.id">
-                <!-- <n-image width="25" height="25"  
-                    src="https://static.wikia.nocookie.net/pokemongo/images/8/88/Icon_Bug.png/revision/latest/scale-to-width-down/25?cb=20171219195822"/> -->
-                <n-button strong secondary round :style="{color: 'white',
-                    backgroundColor: typeColor(item.type.name),
-                }">
-                    {{item.type.name}}
-                </n-button>
-            </n-gi>
-        </n-grid>
-        
-        <n-skeleton v-if="loading" :width="200" :height="200" :sharp="false" size="medium" />
-        <n-grid v-else cols="2" v-for="item in detailData.stats" :key="item.id" class="my-2">
-            <n-grid-item class="font-bold">
-                {{statName(item.stat.name)}} 
-            </n-grid-item>
-            <n-grid-item>
-                {{item.base_stat}}
-            </n-grid-item>
-        </n-grid>
-        <!-- <a :href="inputData.url" class="text-primary ">Go to URL</a> -->
-        <button class="text-primary my-4" @click="showModal = true">
-            More about {{inputData.name.charAt(0).toUpperCase() + inputData.name.slice(1)}} 
-            <n-icon size="12" class="text-primary">
-                <arrow-forward-outline />
-            </n-icon>
-        </button>
-        <n-modal v-model:show="showModal">
-            <n-card
-                style="width: 60%"
-                :title="inputData.name.charAt(0).toUpperCase() + inputData.name.slice(1)"
-                :bordered="false"
-                size="huge"
-                role="dialog"
-                aria-modal="true"
+            <div
+                :id="'image-scroll-container-'+inputData.name"
+                style="
+                    overflow: auto;
+                    width:100%;
+                    height:100%;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                "
             >
-                <n-grid cols="2" class="my-2">
-                    <n-grid-item class="font-bold">Base Experience</n-grid-item>
-                    <n-grid-item>{{detailData.base_experience}} EXP</n-grid-item>
-                </n-grid>
-                <n-grid cols="2" class="my-2">
-                    <n-grid-item class="font-bold">Height</n-grid-item>
-                    <n-grid-item>{{detailData.height}} m</n-grid-item>
-                </n-grid>
-                <n-grid cols="2" class="my-2">
-                    <n-grid-item class="font-bold">Weight</n-grid-item>
-                    <n-grid-item>{{detailData.weight}} KG</n-grid-item>
-                </n-grid>
-                <n-grid cols="2" v-for="(item, index) in detailData.abilities" :key="index" class="my-2">
-                    <n-grid-item class="font-bold">
-                        Ability {{index+1}}
-                    </n-grid-item>
-                    <n-grid-item>
-                        {{item.ability.name}} 
-                    </n-grid-item>
-                </n-grid>
-            </n-card>
-        </n-modal>
+                <n-image  :src="detailData?.sprites?.front_default" 
+                    fallback-src="https://icon-library.com/images/pokeball-icon-transparent/pokeball-icon-transparent-8.jpg"
+                    width="100%" 
+                    height="100%" 
+                    lazy
+                    :intersection-observer-options="{
+                        root: '#image-scroll-container-'+inputData.name
+                    }"
+                />
+            </div>
+        </template>
+        <div v-if="isList">
+            <n-skeleton v-if="loading" :width="200" :height="100" :sharp="false" size="medium" />
+            <n-grid v-else x-gap="10" :cols="3" class="my-2">
+                <n-gi v-for="item in detailData.types" :key="item.id">
+                    <!-- <n-image width="25" height="25"  
+                        src="https://static.wikia.nocookie.net/pokemongo/images/8/88/Icon_Bug.png/revision/latest/scale-to-width-down/25?cb=20171219195822"/> -->
+                    <n-button strong secondary round :style="{color: 'white',
+                        backgroundColor: typeColor(item.type.name),
+                    }">
+                        {{item.type.name}}
+                    </n-button>
+                </n-gi>
+            </n-grid>
+            
+            <n-skeleton v-if="loading" :width="200" :height="200" :sharp="false" size="medium" />
+            <n-grid v-else cols="2" v-for="item in detailData.stats" :key="item.id" class="my-2">
+                <n-grid-item class="font-bold">
+                    {{statName(item.stat.name)}} 
+                </n-grid-item>
+                <n-grid-item>
+                    {{item.base_stat}}
+                </n-grid-item>
+            </n-grid>
+
+            <button class="text-primary my-4" @click="showModal = true">
+                More about {{inputData.name.charAt(0).toUpperCase() + inputData.name.slice(1)}} 
+                <n-icon size="12" class="text-primary">
+                    <arrow-forward-outline />
+                </n-icon>
+            </button>
+            <n-modal v-model:show="showModal">
+                <n-card
+                    style="width: 60%"
+                    :title="inputData.name.charAt(0).toUpperCase() + inputData.name.slice(1)"
+                    :bordered="false"
+                    size="huge"
+                    role="dialog"
+                    aria-modal="true"
+                >
+                    <n-grid cols="2" class="my-2">
+                        <n-grid-item class="font-bold">Base Experience</n-grid-item>
+                        <n-grid-item>{{detailData.base_experience}} EXP</n-grid-item>
+                    </n-grid>
+                    <n-grid cols="2" class="my-2">
+                        <n-grid-item class="font-bold">Height</n-grid-item>
+                        <n-grid-item>{{detailData.height}} m</n-grid-item>
+                    </n-grid>
+                    <n-grid cols="2" class="my-2">
+                        <n-grid-item class="font-bold">Weight</n-grid-item>
+                        <n-grid-item>{{detailData.weight}} KG</n-grid-item>
+                    </n-grid>
+                    <n-grid cols="2" v-for="(item, index) in detailData.abilities" :key="index" class="my-2">
+                        <n-grid-item class="font-bold">
+                            Ability {{index+1}}
+                        </n-grid-item>
+                        <n-grid-item>
+                            {{item.ability.name}} 
+                        </n-grid-item>
+                    </n-grid>
+                </n-card>
+            </n-modal>
+        </div>
     </n-card>
 </template>
 
@@ -85,6 +100,7 @@ export default {
     name: "List Item",
     props: [
         "inputData",
+        "isList",
     ],
     components: {
         NCard,
@@ -110,17 +126,30 @@ export default {
     },
     created(){
         this.fetchAPokemon();
-        this.loading = false;
+        this.initFavorite();
+        
     },
-    // mounted(){
-    //     console.log('wow', this.listFavorites)
-    // },
+    watch: {
+        inputData: {
+            handler: function (val, oldVal) { /* ... */ },
+            deep: true
+        },
+    },
     methods: {
+        initFavorite(){
+            // console.log('initFavorite');
+            if(!this.isList || (this.isList && this.listFavorites.includes(this.inputData.name))){
+                this.favorite = true;
+            }
+        },
         fetchAPokemon(){
+            this.loading = true;
+            // console.log('url',this.inputData.url);
             axios.get(this.inputData.url)
             .then( (response) => {
                 this.detailData = response.data;
                 // console.log(this.detailData);
+                this.loading = false;
             })
             .catch( (error) => {
                 console.log(error);
@@ -183,7 +212,6 @@ export default {
             }
         },
         favoriteFunc(str){
-            
             if(this.favorite){
                 // this.listFavorites = this.listFavorites.filter(item => item !== str);
                 this.listFavorites.forEach((element,index) => {
@@ -198,6 +226,9 @@ export default {
             
             // console.log('fav', this.listFavorites, this.favorite, str);
             this.favorite = !this.favorite;
+            if(!this.isList){
+                this.$emit("reloadFavorites");
+            }
         },
     },
 }
@@ -206,5 +237,15 @@ export default {
 <style scoped>
     .n-image{
         display: flex !important;
+    }
+    .fav-icon-isList{
+        position: absolute;
+        right: 2%;
+        top: -130%;
+    }
+    .fav-icon-isNotList{
+        position: absolute;
+        right: 2%;
+        top: -1450%;
     }
 </style>

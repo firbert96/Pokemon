@@ -6,10 +6,10 @@
   <n-card>
     <n-tabs type="segment" animated>
       <n-tab-pane name="list" tab="List">
-        <List />
+        <List :isList="true"/>
       </n-tab-pane>
       <n-tab-pane name="favorites" tab="Favorites">
-        Favorites
+        <List :isList="false"/>
       </n-tab-pane>
     </n-tabs>
   </n-card>
