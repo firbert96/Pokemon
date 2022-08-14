@@ -4,7 +4,7 @@
       src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/International_Pok%C3%A9mon_logo.svg/1200px-International_Pok%C3%A9mon_logo.svg.png"/>
   </div>
   <n-card>
-    <n-tabs type="line" animated>
+    <n-tabs type="segment" animated>
       <n-tab-pane name="list" tab="List">
         <List />
       </n-tab-pane>
@@ -39,4 +39,8 @@ export default {
       margin-left: auto;
       margin-right: auto;
   }
+  /* .n-tabs-tab--active{
+    background-color: var('--vt-c-primary');
+  } */
+
 </style>
