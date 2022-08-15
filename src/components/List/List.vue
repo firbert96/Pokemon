@@ -4,11 +4,13 @@
         title="0 Result of Data"
         description=""
         class="my-8"
-        v-if="(this.isList && allData?.results?.length === 0) || (!this.isList && allDataFavorites?.length === 0)"
+        v-if="(this.isList && allData?.results?.length === 0 && showTypeDefault ==='all') ||
+            (this.isList && allDataTypes?.length === 0 && showTypeDefault !=='all') || 
+            (!this.isList && allDataFavorites?.length === 0)"
     >
     </n-result>
     <div v-else>
-        <n-row gutter="12">
+        <n-row gutter="12" v-if="this.isList">
             <n-col :span="6">
                 <label for="showData">Select Show Data</label>
                 <n-space vertical id="showData">
@@ -30,8 +32,13 @@
             </div>
             </transition>
             <div  id="infinite-list">
-                <n-grid class="list-group" cols="2 s:2 m:3 l:3 xl:3 2xl:4" :x-gap="12" :y-gap="8"  responsive="screen" v-if="isList">
+                <n-grid class="list-group" cols="2 s:2 m:3 l:3 xl:3 2xl:4" :x-gap="12" :y-gap="8"  responsive="screen" v-if="isList && showTypeDefault ==='all'">
                     <n-grid-item class="list-group-item" v-for="(item,index) in allData.results" :key="index">
+                        <ListItem :inputData="item" :isList="isList"/>
+                    </n-grid-item>
+                </n-grid>
+                <n-grid class="list-group" cols="2 s:2 m:3 l:3 xl:3 2xl:4" :x-gap="12" :y-gap="8"  responsive="screen" v-if="isList && showTypeDefault !=='all'">
+                    <n-grid-item class="list-group-item" v-for="(item,index) in allDataTypes" :key="index">
                         <ListItem :inputData="item" :isList="isList"/>
                     </n-grid-item>
                 </n-grid>
@@ -49,7 +56,6 @@
 import ListItem from "./ListItem.vue";
 import axios from 'axios';
 import {  NGrid, NGridItem, NResult, NSpace, NSelect, NRow, NCol, } from 'naive-ui'
-import { registerRuntimeCompiler } from '@vue/runtime-core';
 export default {
   name: "List",
   components: {
@@ -65,7 +71,7 @@ export default {
   data(){
     return {
       allData:{},
-      debug:false,
+      allDataTypes:[],
       allDataFavorites:[],
       loading: false,
       nextItem: 1,
@@ -246,19 +252,10 @@ export default {
     },
     handleShowTypes(){
         if(this.showTypeDefault !== 'all') {
+            this.allDataTypes = [];
             axios.get('https://pokeapi.co/api/v2/type/'+this.showTypeDefault)
             .then( (response) => {
-                // response.data.pokemon.forEach( (el,index) => {
-                //     if(index === this.showDataDefault) {
-                //         return;
-                //     }
-                //     const params = {
-                //         name: el.pokemon.name,
-                //         url:el.pokemon.url,
-                //     }
-                //     this.allData.results.push(params);
-                // });
-                console.log(response.data.pokemon, this.showDataDefault);
+                // console.log(response.data.pokemon, this.showDataDefault);
                 this.allData = {
                     count: this.showDataDefault,
                     next: null,
@@ -270,9 +267,9 @@ export default {
                         name: response.data.pokemon[i].pokemon.name,
                         url:response.data.pokemon[i].pokemon.url,
                     }
-                    this.allData.results.push(params);
+                    this.allDataTypes.push(params);
                 }
-                console.log('trigger',this.allData);
+                // console.log('trigger',this.allDataTypes);
             })
             .catch( (error) => {
                 console.log(error);
@@ -293,15 +290,9 @@ export default {
     .list-group {
         overflow: auto;
         height: 100%;
-        /* border: 2px solid #dce4ec;
-        border-radius: 5px; */
     }
     .list-group-item {
         margin-top: 1px;
-        /* border-left: none;
-        border-right: none;
-        border-top: none;
-        border-bottom: 2px solid #dce4ec; */
     }
     .loading {
         text-align: center;
@@ -321,4 +312,16 @@ export default {
     .fade-enter, .fade-leave-to {
         opacity: 0
     }
+/* 
+    .n-base-select-option--selected {
+        .n-base-select-option__content {
+            width: 100% !important;
+        }
+        .n-base-select-option__check {
+            right: 0 !important;
+            top: 0 !important;
+        }
+    } */
+    
+    
 </style>
