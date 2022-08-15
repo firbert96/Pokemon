@@ -129,12 +129,6 @@ export default {
         this.initFavorite();
         
     },
-    watch: {
-        inputData: {
-            handler: function (val, oldVal) { /* ... */ },
-            deep: true
-        },
-    },
     methods: {
         initFavorite(){
             // console.log('initFavorite');
@@ -247,5 +241,12 @@ export default {
         position: absolute;
         right: 2%;
         top: -1450%;
+    }
+    @media (max-width: 400px) {
+        .fav-icon-isList{
+            position: absolute;
+            right: 2%;
+            top: -315%;
+        }
     }
 </style>

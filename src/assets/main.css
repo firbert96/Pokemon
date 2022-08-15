@@ -33,7 +33,9 @@ a,
 
   #app {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* grid-template-columns: 1fr 1fr; */
+    grid-template-columns: none !important;
+    width: 60% !important;
     padding: 0 2rem;
   }
 }

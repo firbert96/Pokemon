@@ -11,18 +11,24 @@
     </n-result>
     <div v-else>
         <n-row gutter="12" v-if="this.isList">
-            <n-col :span="6">
+            <n-col :span="this.$screen.width < 400 ? 12:6">
                 <label for="showData">Select Show Data</label>
                 <n-space vertical id="showData">
                     <n-select v-model:value="showDataDefault" :options="showData" placeholder="Select Show Data" @update:value="handleShowData"/>
                 </n-space>
             </n-col>
-            <n-col :span="6">
+            <n-col :span="this.$screen.width < 400 ? 12:6">
                 <label for="showTypes">Select Types</label>
                 <n-space vertical id="showTypes">
                     <n-select v-model:value="showTypeDefault" :options="showTypes" placeholder="Select Types" @update:value="handleShowTypes"/>
                 </n-space>
             </n-col>
+            <!-- <n-col :span="6">
+                <label for="sort">Sort</label>
+                <n-space vertical id="sort">
+                    <n-select v-model:value="sortValue" :options="sortOptions" placeholder="Sorting" @update:value="handleSorting"/>
+                </n-space>
+            </n-col> -->
         </n-row>
 
         <div class="list-group-wrapper mt-4">
@@ -31,18 +37,18 @@
                 <span class="fa fa-spinner fa-spin"></span> Loading
             </div>
             </transition>
-            <div  id="infinite-list">
-                <n-grid class="list-group" cols="2 s:2 m:3 l:3 xl:3 2xl:4" :x-gap="12" :y-gap="8"  responsive="screen" v-if="isList && showTypeDefault ==='all'">
+            <div id="infinite-list">
+                <n-grid class="list-group" cols="1 s:1 m:3 l:3 xl:3 2xl:4" :x-gap="12" :y-gap="8"  responsive="screen" v-if="isList && showTypeDefault ==='all'">
                     <n-grid-item class="list-group-item" v-for="(item,index) in allData.results" :key="index">
                         <ListItem :inputData="item" :isList="isList"/>
                     </n-grid-item>
                 </n-grid>
-                <n-grid class="list-group" cols="2 s:2 m:3 l:3 xl:3 2xl:4" :x-gap="12" :y-gap="8"  responsive="screen" v-if="isList && showTypeDefault !=='all'">
+                <n-grid class="list-group" cols="1 s:1 m:3 l:3 xl:3 2xl:4" :x-gap="12" :y-gap="8"  responsive="screen" v-if="isList && showTypeDefault !=='all'">
                     <n-grid-item class="list-group-item" v-for="(item,index) in allDataTypes" :key="index">
                         <ListItem :inputData="item" :isList="isList"/>
                     </n-grid-item>
                 </n-grid>
-                <n-grid class="list-group" cols="2 s:2 m:3 l:3 xl:3 2xl:4" :x-gap="12" :y-gap="8"  responsive="screen" v-else>
+                <n-grid class="list-group" cols="1 s:1 m:3 l:3 xl:3 2xl:4" :x-gap="12" :y-gap="8"  responsive="screen" v-else>
                     <n-grid-item class="list-group-item" v-for="(item,index) in allDataFavorites" :key="index">
                         <ListItem :inputData="item" :isList="isList" @reloadFavorites="fetchAllPokemonFavorites()"/>
                     </n-grid-item>
@@ -178,17 +184,22 @@ export default {
         },
       ],
       showTypeDefault: 'all',
+      sortOptions: [
+        {
+          label: 'Ascending',
+          value: 'asc'
+        },
+        {
+          label: 'Descending',
+          value: 'desc'
+        },
+      ],
+      sortValue: 'asc',
     }
   },
   props: [
     "isList",
   ],
-  watch: {
-    allData: {
-      handler: function (val, oldVal) { /* ... */ },
-      deep: true
-    },
-  },
   created(){
     if(this.isList) {
         this.fetchAllPokemon();
@@ -196,6 +207,7 @@ export default {
     else {
         this.fetchAllPokemonFavorites();
     }
+    // console.log('width',this.$screen.width,'height',this.$screen.height);
   },
   mounted () {
     // Detect when scrolled to bottom.
@@ -215,7 +227,38 @@ export default {
         axios.get('https://pokeapi.co/api/v2/pokemon?limit='+this.showDataDefault+'&offset=0')
         .then( (response) => {
             this.allData = response.data;
-            // console.log(this.allData);
+            // if (this.sortValue === 'desc') {
+            //     this.allData.results = this.allData.results.reserve();
+            // }
+            // console.log('trigger fetchAllPokemon',this.showDataDefault,this.allDataTypes, this.sortValue);
+        })
+        .catch( (error) => {
+            console.log(error);
+        });
+    },
+    fetchTypesPokemon(){
+        this.allDataTypes = [];
+        axios.get('https://pokeapi.co/api/v2/type/'+this.showTypeDefault)
+        .then( (response) => {
+            // console.log(response.data.pokemon, this.showDataDefault);
+            this.allData = {
+                count: this.showDataDefault,
+                next: null,
+                previous: null,
+                results: [],
+            };
+            for (let i = 0; i < this.showDataDefault; i++) {
+                const params = {
+                    name: response.data.pokemon[i].pokemon.name,
+                    url:response.data.pokemon[i].pokemon.url,
+                }
+                this.allDataTypes.push(params);
+            }
+            
+            // if (this.sortValue === 'desc') {
+            //     this.allDataTypes = this.allDataTypes.reserve();
+            // }
+            // console.log('trigger fetchTypesPokemon',this.showTypeDefault ,this.allDataTypes, this.sortValue);
         })
         .catch( (error) => {
             console.log(error);
@@ -248,37 +291,23 @@ export default {
         }, 200);  
     },
     handleShowData(){
-        this.fetchAllPokemon();
+        this.reload();
     },
     handleShowTypes(){
+        this.reload();
+    },
+    handleSorting(){
+        this.reload();
+    },
+    reload(){
+        // console.log('reload', this.showTypeDefault);
         if(this.showTypeDefault !== 'all') {
-            this.allDataTypes = [];
-            axios.get('https://pokeapi.co/api/v2/type/'+this.showTypeDefault)
-            .then( (response) => {
-                // console.log(response.data.pokemon, this.showDataDefault);
-                this.allData = {
-                    count: this.showDataDefault,
-                    next: null,
-                    previous: null,
-                    results: [],
-                };
-                for (let i = 0; i < this.showDataDefault; i++) {
-                    const params = {
-                        name: response.data.pokemon[i].pokemon.name,
-                        url:response.data.pokemon[i].pokemon.url,
-                    }
-                    this.allDataTypes.push(params);
-                }
-                // console.log('trigger',this.allDataTypes);
-            })
-            .catch( (error) => {
-                console.log(error);
-            });
+            this.fetchTypesPokemon();
         }
         else{
             this.fetchAllPokemon();
         }
-    },
+    }
   }
 }
 </script>
@@ -312,16 +341,4 @@ export default {
     .fade-enter, .fade-leave-to {
         opacity: 0
     }
-/* 
-    .n-base-select-option--selected {
-        .n-base-select-option__content {
-            width: 100% !important;
-        }
-        .n-base-select-option__check {
-            right: 0 !important;
-            top: 0 !important;
-        }
-    } */
-    
-    
 </style>
