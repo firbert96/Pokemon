@@ -28,8 +28,7 @@
             </div>
         </template>
         <div v-if="isList">
-            <n-skeleton v-if="loading" :width="200" :height="100" :sharp="false" size="medium" />
-            <n-grid v-else x-gap="10" :cols="3" class="my-2">
+            <n-grid :x-gap="this.$screen.width < 400 ? 60:10" :cols="3" class="my-2">
                 <n-gi v-for="item in detailData.types" :key="item.id">
                     <!-- <n-image width="25" height="25"  
                         src="https://static.wikia.nocookie.net/pokemongo/images/8/88/Icon_Bug.png/revision/latest/scale-to-width-down/25?cb=20171219195822"/> -->
@@ -41,8 +40,7 @@
                 </n-gi>
             </n-grid>
             
-            <n-skeleton v-if="loading" :width="200" :height="200" :sharp="false" size="medium" />
-            <n-grid v-else cols="2" v-for="item in detailData.stats" :key="item.id" class="my-2">
+            <n-grid cols="2" v-for="item in detailData.stats" :key="item.id" class="my-2">
                 <n-grid-item class="font-bold">
                     {{statName(item.stat.name)}} 
                 </n-grid-item>
@@ -93,7 +91,7 @@
 </template>
 
 <script>
-import { NGrid, NGridItem, NCard, NImage, NSkeleton, NGi, NButton, NIcon, NModal, } from 'naive-ui'
+import { NGrid, NGridItem, NCard, NImage,  NGi, NButton, NIcon, NModal, } from 'naive-ui'
 import { HeartOutline, Heart, ArrowForwardOutline, } from '@vicons/ionicons5'
 import axios from 'axios';
 export default {
@@ -107,7 +105,6 @@ export default {
         NImage,
         NGrid,
         NGridItem,
-        NSkeleton,
         NGi,
         NButton,
         HeartOutline,
@@ -244,9 +241,10 @@ export default {
     }
     @media (max-width: 400px) {
         .fav-icon-isList{
-            position: absolute;
-            right: 2%;
             top: -315%;
+        }
+        .fav-icon-isNotList{
+            top: -2670%;
         }
     }
 </style>
