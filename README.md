@@ -1,14 +1,28 @@
-# vue-project
+# List-Pokemon
 
-This template should help get you started developing with Vue 3 in Vite.
+The applicant is to program a simple application for Pokédex. A Pokédex is a digital
+encyclopedia created by Professor Oak as an invaluable tool to Trainers in the Pokémon
+world. It gives information about all Pokémon in the world that are contained in its
+database.
 
-## Recommended IDE Setup
+## Several Features
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+- Pokémon trainers can browse Pokémon in an infinite scrolling method so that the
+trainers can see all the pokemons without any interruption.
+- Pokémon trainers can view detailed information about each Pokémon.
+- Pokémon trainers can view the image of each Pokémon.
+- Pokémon trainers can favourite certain Pokémon and can see the list of the
+favourited Pokémon.
+- Pokémon trainers can filter the Pokémon based on the Pokémon types (e.g.
+Water, Grass, Fire, Ghost, Flying).
 
-## Customize configuration
+## Figma
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+https://www.figma.com/file/nsvU1NMTFBReSaHWAGW3WV/List-Pokemon?node-id=0%3A1
+
+## Cloud Enviroment
+
+https://gleaming-sunshine-877819.netlify.app/
 
 ## Project Setup
 
