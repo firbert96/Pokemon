@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "start": "node --port 7777",
-    "build": "node build",
+    "build": "ng build",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
     "dev": "nodemon --exec \" npm run lint && vite --port 7777\" "
