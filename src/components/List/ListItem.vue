@@ -24,14 +24,27 @@
                     :intersection-observer-options="{
                         root: '#image-scroll-container-'+inputData.name
                     }"
-                />
+                >
+                    <template #placeholder>
+                        <div
+                        style="
+                            width:333px;
+                            height:333px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background-color: #8882;
+                        "
+                        >
+                        Loading ...
+                        </div>
+                    </template>
+                </n-image>
             </div>
         </template>
         <div v-if="isList">
             <n-grid :x-gap="this.$screen.width < 400 ? 60:10" :cols="3" class="my-2">
                 <n-gi v-for="item in detailData.types" :key="item.id">
-                    <!-- <n-image width="25" height="25"  
-                        src="https://static.wikia.nocookie.net/pokemongo/images/8/88/Icon_Bug.png/revision/latest/scale-to-width-down/25?cb=20171219195822"/> -->
                     <n-button strong secondary round :style="{color: 'white',
                         backgroundColor: typeColor(item.type.name),
                     }">
@@ -128,23 +141,20 @@ export default {
     },
     methods: {
         initFavorite(){
-            // console.log('initFavorite');
             if(!this.isList || (this.isList && this.listFavorites.includes(this.inputData.name))){
                 this.favorite = true;
             }
         },
         fetchAPokemon(){
             this.loading = true;
-            // console.log('url',this.inputData.url);
             axios.get(this.inputData.url)
             .then( (response) => {
                 this.detailData = response.data;
-                // console.log(this.detailData);
-                this.loading = false;
             })
             .catch( (error) => {
                 console.log(error);
             });
+            this.loading = false;
         },
         statName(str) {
             switch(str) {
@@ -204,7 +214,6 @@ export default {
         },
         favoriteFunc(str){
             if(this.favorite){
-                // this.listFavorites = this.listFavorites.filter(item => item !== str);
                 this.listFavorites.forEach((element,index) => {
                     if(element === str) {
                         this.listFavorites.splice(index, 1);
@@ -214,8 +223,6 @@ export default {
             else {
                 this.listFavorites.push(str);
             }
-            
-            // console.log('fav', this.listFavorites, this.favorite, str);
             this.favorite = !this.favorite;
             if(!this.isList){
                 this.$emit("reloadFavorites");
@@ -239,6 +246,7 @@ export default {
         right: 2%;
         top: -1450%;
     }
+
     @media (max-width: 400px) {
         .fav-icon-isList{
             top: -315%;
@@ -247,4 +255,5 @@ export default {
             top: -2670%;
         }
     }
+    
 </style>

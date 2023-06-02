@@ -1,11 +1,6 @@
 
 <template>
-  <!-- <header>
-  </header>
-
-  <main> -->
-    <Home/>
-  <!-- </main> -->
+  <Home/>
 </template>
 
 <script>

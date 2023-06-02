@@ -55,3 +55,5 @@ npm run lint
 npm run deploy
 ```
 
+### Source
+- https://www.digitalocean.com/community/tutorials/vuejs-implementing-infinite-scroll
